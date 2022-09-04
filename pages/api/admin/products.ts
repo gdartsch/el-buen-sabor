@@ -48,6 +48,7 @@ const getProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         return product;
     });
 
+    //@ts-ignore
     res.status(200).json(updatedProducts);
 
 }
