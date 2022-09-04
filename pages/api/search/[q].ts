@@ -41,5 +41,6 @@ const searchProducts = async (req: NextApiRequest, res: NextApiResponse<Data>) =
 
     await db.disconnect();
 
+    //@ts-ignore
     res.status(200).json( products );
 }
