@@ -4,7 +4,7 @@ import { IIngredient } from '../interfaces';
 
 export const getIngredientsByName =async (name: string): Promise<IIngredient[]> => {
     
-    await db.connect();
+    //await db.connect();
 
     name = name.toString().toLowerCase();
 

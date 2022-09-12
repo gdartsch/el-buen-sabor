@@ -31,11 +31,13 @@ const getIngredients = async (req: NextApiRequest, res: NextApiResponse<Data>) =
 
     await db.connect();
 
-    const ingredient = await Ingredient.find( {nombre: nombre} )
-                                .select('nombre unidadMedida categoria costoUnidad inStock minStock active slug -_id')
-                                .lean();
+    const ingredient = await Ingredient.find( {nombre: nombre.toString()} )
+                            .select('nombre unidadMedida categoria costoUnidad inStock minStock active slug -_id')
+                            .lean();
+    
 
     await db.disconnect();
 
-    res.status(200).json( ingredient as any )
+    if(ingredient != null)
+        res.status(200).json( ingredient as any )
 }

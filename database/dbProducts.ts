@@ -38,7 +38,7 @@ export const getAllProductsSlugs =async (): Promise<ProductSlug[]> => {
 
 export const getProductsByTerm =async (term: string): Promise<IProduct[]> => {
     
-    await db.connect();
+    //wait db.connect();
 
     term = term.toString().toLowerCase();
 
