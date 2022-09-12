@@ -33,7 +33,7 @@ export default function handler (req: NextApiRequest, res: NextApiResponse<Data>
 
 const getIngredients = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         
-    await db.connect
+    await db.connect();
     const ingredients = await Ingredient.find()
         .sort({ title: 'asc'})
         .lean();
