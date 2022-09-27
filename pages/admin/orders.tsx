@@ -7,12 +7,14 @@ import { elBuenSaborApi } from '../../api';
 import { AdminLayout } from '../../components/layouts/AdminLayout';
 import { IOrder, IUser, IOrderState } from '../../interfaces';
 import { useExcelDownloder } from 'react-xls';
+import { useRouter } from 'next/router';
 
 const OrdersPage = () => {
 
     const {data, error} = useSWR<IOrder[]>('/api/admin/orders');
     const [orders, setOrders] = useState<IOrder[]>([]);
     const { ExcelDownloder, Type } = useExcelDownloder();
+    const router = useRouter();
 
     useEffect(() => {
       if (data) {
@@ -52,7 +54,16 @@ const columns: GridColDef[] = [
                 <Select
                     value={row.currentState}
                     label="Estado del pedido"
-                    onChange={ ({target}) => {onSatusUpdated(row.id, target.value, row.isPaid)}}
+                    onChange={ ({target}) => {
+                        console.log(row.currentState);
+                        if(row.currentState[0] === 'Entregado' || row.currentState[0] === 'Cancelado'){
+                            return;
+                        } 
+                        onSatusUpdated(row.id, target.value, row.isPaid);
+                        
+                        router.reload();
+                    }}
+                    disabled = {row.currentState[0] === 'Entregado' || row.currentState[0] === 'Cancelado'}
                     sx={{widht: '300px'}}
                 >
                     <MenuItem value='Ingresado'>Ingresado</MenuItem>
