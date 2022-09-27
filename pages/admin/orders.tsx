@@ -83,7 +83,8 @@ const columns: GridColDef[] = [
                     value={row.isPaid}
                     label="Pagado"
                     onChange={ ({target}) => {onSatusUpdated(row.id, row.currentState,
-                                              target.value === 'true' ? true : false)}}
+                                              target.value === 'true' ? true : false)
+                                              router.reload();}}
                     sx={{widht: '300px'}}
                 >
                     <MenuItem value='false'>No Pagado</MenuItem>
