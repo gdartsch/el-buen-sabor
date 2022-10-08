@@ -1,47 +1,45 @@
-import React, { ChangeEvent, FC, useEffect, useRef, useState } from "react"
-import { GetServerSideProps } from "next"
-import { AdminLayout } from "../../../components/layouts"
-import { ICategories, IProduct } from "../../../interfaces"
 import {
   DriveFileRenameOutline,
   SaveOutlined,
   UploadOutlined,
-} from "@mui/icons-material"
-import { dbProducts } from "../../../database"
+} from '@mui/icons-material'
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   capitalize,
   Card,
-  CardActions,
   CardMedia,
   Checkbox,
   Chip,
   Divider,
   FormControl,
   FormControlLabel,
-  FormGroup,
   FormLabel,
   Grid,
-  ListItem,
-  Paper,
   Radio,
   RadioGroup,
   TextField,
-} from "@mui/material"
-import { useForm } from "react-hook-form"
-import { elBuenSaborApi } from "../../../api"
-import { Product } from "../../../models"
-import { useRouter } from "next/router"
+} from '@mui/material'
+import { GetServerSideProps } from 'next'
+import { useRouter } from 'next/router'
+import { ChangeEvent, FC, useEffect, useRef, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { elBuenSaborApi } from '../../../api'
+import { AdminLayout } from '../../../components/layouts'
+import { dbProducts } from '../../../database'
+import { ICategories, IProduct } from '../../../interfaces'
+import { Product } from '../../../models'
 
 const validCaterogies = [
-  "bebida",
-  "hamburguesa",
-  "pizza",
-  "pancho",
-  "guarnicion",
-  "lomo",
-  "otro",
+  'bebida',
+  'hamburguesa',
+  'pizza',
+  'pancho',
+  'guarnicion',
+  'lomo',
+  'otro',
 ]
 
 interface FormData {
@@ -65,6 +63,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
   const {
     register,
     handleSubmit,
@@ -78,15 +77,15 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-      if (name === "nombre") {
+      if (name === 'nombre') {
         const newSlug =
           value.nombre
             ?.trim()
-            .replaceAll(" ", "_")
-            .replaceAll("'", "")
-            .toLocaleLowerCase() || ""
+            .replaceAll(' ', '_')
+            .replaceAll("'", '')
+            .toLocaleLowerCase() || ''
 
-        setValue("slug", newSlug)
+        setValue('slug', newSlug)
       }
     })
 
@@ -99,18 +98,18 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
     try {
       for (const file of target.files) {
         const formData = new FormData()
-        formData.append("file", file)
+        formData.append('file', file)
         const { data } = await elBuenSaborApi.post<{ message: string }>(
-          "/admin/upload",
+          '/admin/upload',
           formData
         )
-        setValue("imagen", data.message, { shouldValidate: true })
+        setValue('imagen', data.message, { shouldValidate: true })
       }
     } catch (error) {}
   }
 
   const onDeleteImage = (image: string) => {
-    setValue("imagen", getValues("imagen"), { shouldValidate: true })
+    setValue('imagen', getValues('imagen'), { shouldValidate: true })
     router.reload()
   }
 
@@ -119,12 +118,13 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
       return
     }
 
+    setIsSaved(false)
     setIsSaving(true)
 
     try {
       const { data } = await elBuenSaborApi({
-        url: "/admin/products",
-        method: form._id ? "PUT" : "POST",
+        url: '/admin/products',
+        method: form._id ? 'PUT' : 'POST',
         data: form,
       })
 
@@ -133,25 +133,41 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
       } else {
         setIsSaving(false)
       }
+      setIsSaved(true)
     } catch (error) {
-      console.log(error)
+      setIsSaved(false)
       setIsSaving(false)
     }
   }
 
+  const showStatus = () => {
+    setTimeout(() => {
+      setIsSaved(false)
+      router.back()
+    }, 3500)
+    return (
+      <Alert severity='success' sx={{ mt: 2 }}>
+        <AlertTitle>
+          <strong>Producto guardado</strong>
+        </AlertTitle>
+        El producto se guardó correctamente
+      </Alert>
+    )
+  }
+
   return (
     <AdminLayout
-      title={"Producto"}
+      title={'Producto'}
       subTitle={`Editando: ${product.nombre}`}
       icon={<DriveFileRenameOutline />}
     >
       <form onSubmit={handleSubmit(onSubmitForm)}>
-        <Box display="flex" justifyContent="end" sx={{ mb: 1 }}>
+        <Box display='flex' justifyContent='end' sx={{ mb: 1 }}>
           <Button
-            color="secondary"
+            color='secondary'
             startIcon={<SaveOutlined />}
-            sx={{ width: "150px" }}
-            type="submit"
+            sx={{ width: '150px' }}
+            type='submit'
             disabled={isSaving}
           >
             Guardar
@@ -162,54 +178,57 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           {/* Data */}
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Nombre"
-              variant="filled"
+              label='Nombre'
+              variant='filled'
               fullWidth
               sx={{ mb: 1 }}
-              {...register("nombre", {
-                required: "Este campo es requerido",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              {...register('nombre', {
+                required: 'Este campo es requerido',
+                minLength: { value: 2, message: 'Mínimo 2 caracteres' },
               })}
               error={!!errors.nombre}
               helperText={errors.nombre?.message}
             />
 
             <TextField
-              label="Ingredientes"
-              variant="filled"
+              label='Ingredientes'
+              variant='filled'
               fullWidth
               multiline
               sx={{ mb: 1 }}
-              {...register("recipe", {
-                required: "Este campo es requerido",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
-              })}
+              onChange={(e) => {
+                const ingredients: any = e.target.value
+                  .split(',')
+                  .map((ingredient) => ingredient.trim())
+                setValue('recipe', ingredients)
+              }}
+              defaultValue={product.recipe?.map((ingredient) => ingredient[0])}
               error={!!errors.recipe}
             />
 
             <TextField
-              label="Descripcion"
-              variant="filled"
+              label='Descripcion'
+              variant='filled'
               fullWidth
               multiline
               sx={{ mb: 1 }}
-              {...register("descripcion", {
-                required: "Este campo es requerido",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              {...register('descripcion', {
+                required: 'Este campo es requerido',
+                minLength: { value: 2, message: 'Mínimo 2 caracteres' },
               })}
               error={!!errors.descripcion}
               helperText={errors.descripcion?.message}
             />
 
             <TextField
-              label="Precio"
-              type="number"
-              variant="filled"
+              label='Precio'
+              type='number'
+              variant='filled'
               fullWidth
               sx={{ mb: 1 }}
-              {...register("precio", {
-                required: "Este campo es requerido",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              {...register('precio', {
+                required: 'Este campo es requerido',
+                minLength: { value: 2, message: 'Mínimo 2 caracteres' },
               })}
               error={!!errors.precio}
               helperText={errors.precio?.message}
@@ -221,9 +240,9 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               <FormLabel>Categoría</FormLabel>
               <RadioGroup
                 row
-                value={getValues("categoria")}
+                value={getValues('categoria')}
                 onChange={({ target }) =>
-                  setValue("categoria", target.value as ICategories, {
+                  setValue('categoria', target.value as ICategories, {
                     shouldValidate: true,
                   })
                 }
@@ -232,7 +251,7 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
                   <FormControlLabel
                     key={option}
                     value={option}
-                    control={<Radio color="secondary" />}
+                    control={<Radio color='secondary' />}
                     label={capitalize(option)}
                   />
                 ))}
@@ -241,15 +260,15 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
-              label="Slug - URL"
-              variant="filled"
+              label='Slug - URL'
+              variant='filled'
               fullWidth
               sx={{ mb: 1 }}
-              {...register("slug", {
-                required: "Este campo es requerido",
+              {...register('slug', {
+                required: 'Este campo es requerido',
                 validate: (val) =>
-                  val.trim().includes(" ")
-                    ? "No puede contener espacios"
+                  val.trim().includes(' ')
+                    ? 'No puede contener espacios'
                     : undefined,
               })}
               error={!!errors.slug}
@@ -257,14 +276,14 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             />
 
             <TextField
-              label="Tiempo de elaboración en minutos"
-              type="number"
-              variant="filled"
+              label='Tiempo de elaboración en minutos'
+              type='number'
+              variant='filled'
               fullWidth
               sx={{ mb: 1 }}
-              {...register("estimatedTimeMinutes", {
-                required: "Este campo es requerido",
-                minLength: { value: 2, message: "Mínimo 2 caracteres" },
+              {...register('estimatedTimeMinutes', {
+                required: 'Este campo es requerido',
+                minLength: { value: 2, message: 'Mínimo 2 caracteres' },
               })}
               error={!!errors.estimatedTimeMinutes}
               helperText={errors.estimatedTimeMinutes?.message}
@@ -273,20 +292,20 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={getValues("active")}
+                  checked={getValues('active')}
                   onChange={({ target }) =>
-                    setValue("active", target.checked, { shouldValidate: true })
+                    setValue('active', target.checked, { shouldValidate: true })
                   }
-                  color="secondary"
+                  color='secondary'
                 />
               }
-              label="Activo"
+              label='Activo'
             />
 
-            <Box display="flex" flexDirection="column">
+            <Box display='flex' flexDirection='column'>
               <FormLabel sx={{ mb: 1 }}>Imágenes</FormLabel>
               <Button
-                color="secondary"
+                color='secondary'
                 fullWidth
                 startIcon={<UploadOutlined />}
                 sx={{ mb: 3 }}
@@ -296,43 +315,32 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
               </Button>
               <input
                 ref={fileInputRef}
-                type={"file"}
+                type={'file'}
                 multiple
-                accept="image/png, image/gif, image/jpeg"
-                style={{ display: "none" }}
+                accept='image/png, image/gif, image/jpeg'
+                style={{ display: 'none' }}
                 onChange={onFilesSelected}
               />
 
               <Chip
-                label="Es necesario subir una imagenes"
-                color="error"
-                variant="outlined"
+                label='Es necesario subir una imagenes'
+                color='error'
+                variant='outlined'
                 sx={{
-                  display: getValues("imagen").length < 1 ? "flex" : "none",
+                  display: getValues('imagen').length < 1 ? 'flex' : 'none',
                 }}
               />
 
               <Grid container spacing={2}>
                 {
-                  <Grid item xs={4} sm={3} key={getValues("imagen")}>
+                  <Grid item xs={4} sm={3} key={getValues('imagen')}>
                     <Card>
                       <CardMedia
-                        component="img"
-                        className="fadeIn"
-                        image={getValues("imagen")}
-                        alt={getValues("imagen")}
+                        component='img'
+                        className='fadeIn'
+                        image={getValues('imagen')}
+                        alt={getValues('imagen')}
                       />
-                      {/*<CardActions>
-                                                    <Button 
-                                                        fullWidth 
-                                                        color="error"
-                                                        onClick={()=> onDeleteImage(
-                                                            getValues('imagen')
-                                                            )}
-                                                    >
-                                                        Borrar
-                                                    </Button>
-                                                        </CardActions>*/}
                     </Card>
                   </Grid>
                 }
@@ -341,19 +349,49 @@ const ProductAdminPage: FC<Props> = ({ product }) => {
           </Grid>
         </Grid>
       </form>
+      {isSaved && showStatus()}
+      {/* Centered back button */}
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          p: 2,
+        }}
+      >
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={() => {
+            if (isSaved) {
+              router.back()
+            } else {
+              confirm(
+                'Los cambios no han sido guardados.\n¿Está seguro de salir?'
+              ) && router.back()
+            }
+          }}
+        >
+          Volver
+        </Button>
+      </Box>
     </AdminLayout>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { slug = "" } = query
+  const { slug = '' } = query
 
   let product: IProduct | null
 
-  if (slug === "new") {
+  if (slug === 'new') {
     const tempProduct = JSON.parse(JSON.stringify(new Product()))
     delete tempProduct._id
-    tempProduct.imagen = "img1.jpg"
+    tempProduct.imagen = 'img1.jpg'
     product = tempProduct
   } else {
     product = await dbProducts.getProductBySlug(slug.toString())
@@ -362,7 +400,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   if (!product) {
     return {
       redirect: {
-        destination: "/admin/products",
+        destination: '/admin/products',
         permanent: false,
       },
     }

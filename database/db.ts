@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from 'mongoose'
 
 /**
  * 0 = disconnected
@@ -25,12 +25,12 @@ export const connect = async () => {
     await mongoose.disconnect()
   }
 
-  await mongoose.connect(process.env.MONGO_URL || "")
+  await mongoose.connect(process.env.MONGO_URL || '')
   mongoConnection.isConnected = 1
 }
 
 export const disconnect = async () => {
-  if (process.env.NODE_ENV === "development") return
+  if (process.env.NODE_ENV === 'development') return
 
   if (mongoConnection.isConnected === 0) return
 

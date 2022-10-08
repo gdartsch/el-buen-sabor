@@ -1,34 +1,15 @@
-import {
-  AccessTimeOutlined,
-  AttachMoneyOutlined,
-  CancelPresentationOutlined,
-  CategoryOutlined,
-  CreditCardOffOutlined,
-  CreditCardOutlined,
-  DashboardOutlined,
-  GroupOutlined,
-  ProductionQuantityLimitsOutlined,
-} from "@mui/icons-material"
-import {
-  Button,
-  Card,
-  CardContent,
-  Chip,
-  Grid,
-  Typography,
-} from "@mui/material"
-import React, { useEffect, useState } from "react"
-import { SummaryTile } from "../../components/admin"
-import { AdminLayout } from "../../components/layouts/AdminLayout"
-import useSWR from "swr"
-import { DashboardSummaryResponse } from "../../interfaces"
-import { format } from "../../utils/currency"
-import { DataGrid, GridColDef, GridValueGetterParams } from "@mui/x-data-grid"
-import { useExcelDownloder } from "react-xls"
+import { AttachMoneyOutlined, DashboardOutlined } from '@mui/icons-material'
+import { Button, Grid, Typography } from '@mui/material'
+import { DataGrid, GridColDef } from '@mui/x-data-grid'
+import { useExcelDownloder } from 'react-xls'
+import useSWR from 'swr'
+import { SummaryTile } from '../../components/admin'
+import { AdminLayout } from '../../components/layouts/AdminLayout'
+import { DashboardSummaryResponse } from '../../interfaces'
 
 const DashboardPage = () => {
   const { data, error } = useSWR<DashboardSummaryResponse>(
-    "/api/admin/dashboard"
+    '/api/admin/dashboard'
   )
   const { ExcelDownloder, Type } = useExcelDownloder()
 
@@ -37,12 +18,12 @@ const DashboardPage = () => {
   }
 
   if (error) {
-    ;<Typography variant="h3">Error al cargar la información</Typography>
+    ;<Typography variant='h3'>Error al cargar la información</Typography>
   }
 
   const { products, orders, ingredients } = data!
 
-  const totalProductsFromOrders = orders.map((order: any) => order.orderItems)
+  const totalProductsFromOrders = orders.map((order: any) => order?.orderItems)
 
   let cost = 0
 
@@ -108,9 +89,9 @@ const DashboardPage = () => {
   const earningsLastMonth = rawEarningsLastMonth.toFixed(2) - costLastMonth
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 300 },
-    { field: "nombre", headerName: "Nombre", width: 300 },
-    { field: "cantidad", headerName: "Cantidad", width: 300 },
+    { field: 'id', headerName: 'ID', width: 300 },
+    { field: 'nombre', headerName: 'Nombre', width: 300 },
+    { field: 'cantidad', headerName: 'Cantidad', width: 300 },
   ]
 
   let topProductsMonth = []
@@ -173,29 +154,29 @@ const DashboardPage = () => {
 
   return (
     <AdminLayout
-      title="Dashboard"
-      subTitle="Estadísticas generales"
+      title='Dashboard'
+      subTitle='Estadísticas generales'
       icon={<DashboardOutlined />}
     >
       <Grid container spacing={2}>
         <SummaryTile
           title={earningsLastMonth}
-          subTitle="Ganancias del mes"
-          icon={<AttachMoneyOutlined color="success" sx={{ fontsize: 40 }} />}
+          subTitle='Ganancias del mes'
+          icon={<AttachMoneyOutlined color='success' sx={{ fontsize: 40 }} />}
         />
 
         <SummaryTile
           title={earnings}
-          subTitle="Histórico de ganancias"
-          icon={<AttachMoneyOutlined color="success" sx={{ fontsize: 40 }} />}
+          subTitle='Histórico de ganancias'
+          icon={<AttachMoneyOutlined color='success' sx={{ fontsize: 40 }} />}
         />
 
-        <Typography variant="h1" component="h1">
+        <Typography variant='h1' component='h1'>
           Ranking de productos vendidos en el último mes
         </Typography>
 
-        <Grid container className="fadeIn">
-          <Grid item xs={12} sx={{ height: 650, width: "100%" }}>
+        <Grid container className='fadeIn'>
+          <Grid item xs={12} sx={{ height: 650, width: '100%' }}>
             <DataGrid
               rows={rows}
               columns={columns}
@@ -208,7 +189,7 @@ const DashboardPage = () => {
           <Button>
             <ExcelDownloder
               data={dataExcel}
-              filename={"Estadisticas"}
+              filename={'Estadisticas'}
               type={Type.Button}
             >
               Descargar en formato de hoja de cálculo

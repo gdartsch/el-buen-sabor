@@ -1,13 +1,13 @@
-import { Box, Button, Chip, Grid, Typography } from "@mui/material"
-import { NextPage, GetStaticPaths, GetStaticProps } from "next"
-import { useRouter } from "next/router"
-import { useState, useContext } from "react"
-import { ShopLayout } from "../../components/layouts/ShopLayout"
-import { ProductSlideshow } from "../../components/products"
-import { ItemCounter } from "../../components/ui"
-import { dbIngredients, dbProducts } from "../../database"
-import { ICartProduct, IIngredient, IProduct } from "../../interfaces"
-import { CartContext } from "../../context/cart/CartContext"
+import { Box, Button, Chip, Grid, Typography } from '@mui/material'
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useContext, useState } from 'react'
+import { ShopLayout } from '../../components/layouts/ShopLayout'
+import { ProductSlideshow } from '../../components/products'
+import { ItemCounter } from '../../components/ui'
+import { CartContext } from '../../context/cart/CartContext'
+import { dbIngredients, dbProducts } from '../../database'
+import { ICartProduct, IIngredient, IProduct } from '../../interfaces'
 
 interface Props {
   product: IProduct
@@ -39,7 +39,7 @@ const ProductPage: NextPage<Props> = ({ product, totalStock }) => {
 
   const onAddProduct = () => {
     addProductToCard(tempCartProduct)
-    router.push("/cart")
+    router.push('/cart')
   }
 
   return (
@@ -50,17 +50,17 @@ const ProductPage: NextPage<Props> = ({ product, totalStock }) => {
         </Grid>
 
         <Grid item xs={12} sm={5}>
-          <Box display="flex" flexDirection="column">
-            <Typography variant="h1" component="h1">
+          <Box display='flex' flexDirection='column'>
+            <Typography variant='h1' component='h1'>
               {product.nombre}
             </Typography>
             <Typography
-              variant="subtitle1"
-              component="h2"
+              variant='subtitle1'
+              component='h2'
             >{`$${product.precio}`}</Typography>
 
             <Box sx={{ my: 2 }}>
-              <Typography variant="subtitle2">Cantidad</Typography>
+              <Typography variant='subtitle2'>Cantidad</Typography>
               <ItemCounter
                 currentValue={tempCartProduct.cantidad}
                 updatedQuantity={onUpdateQuantity}
@@ -69,18 +69,18 @@ const ProductPage: NextPage<Props> = ({ product, totalStock }) => {
             </Box>
             {totalStock > 0 ? (
               <Button
-                color="secondary"
-                className="circular-btn"
+                color='secondary'
+                className='circular-btn'
                 onClick={onAddProduct}
               >
                 Agregar al carrito
               </Button>
             ) : (
-              <Chip label="No hay Stock" color="error" variant="outlined" />
+              <Chip label='No hay Stock' color='error' variant='outlined' />
             )}
             <Box sx={{ mt: 3 }}>
-              <Typography variant="subtitle2">Descripción</Typography>
-              <Typography variant="body2">{product.descripcion}</Typography>
+              <Typography variant='subtitle2'>Descripción</Typography>
+              <Typography variant='body2'>{product.descripcion}</Typography>
             </Box>
           </Box>
         </Grid>
@@ -98,12 +98,12 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
         slug: slug,
       },
     })),
-    fallback: "blocking",
+    fallback: 'blocking',
   }
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const { slug = "" } = params as { slug: string }
+  const { slug = '' } = params as { slug: string }
   const product = await dbProducts.getProductBySlug(slug)
 
   let ingredients: IIngredient[] = []
@@ -127,7 +127,6 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     }
 
     if (neededIngredients.length > sotckedIngredients.length) {
-      console.log("No hay stock")
       return 0
     }
     return Math.trunc(Math.min(...stock))
@@ -138,7 +137,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   if (!product) {
     return {
       redirect: {
-        destination: "/",
+        destination: '/',
         permanent: false,
       },
     }

@@ -1,3 +1,2 @@
-
-
-export * from './useProducts';
+export * from './useProducts'
+export * from './useStyles'

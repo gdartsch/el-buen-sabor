@@ -1,8 +1,8 @@
-import type { NextApiRequest, NextApiResponse } from "next"
-import { getSession } from "next-auth/react"
-import { db } from "../../../database"
-import { IOrder } from "../../../interfaces"
-import { Product, Order } from "../../../models"
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { getSession } from 'next-auth/react'
+import { db } from '../../../database'
+import { IOrder } from '../../../interfaces'
+import { Order, Product } from '../../../models'
 
 type Data = { message: string } | IOrder
 
@@ -11,12 +11,12 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   switch (req.method) {
-    case "POST":
+    case 'POST':
       return createOrder(req, res)
-    case "GET":
+    case 'GET':
       return getOrders(req, res)
     default:
-      return res.status(400).json({ message: "Bad Request" })
+      return res.status(400).json({ message: 'Bad Request' })
   }
 }
 
@@ -47,7 +47,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   if (!session) {
     return res
       .status(401)
-      .json({ message: "Debe de estar autenticado para realizar esta acción" })
+      .json({ message: 'Debe de estar autenticado para realizar esta acción' })
   }
 
   const productsIds = orderItems.map((product) => product._id)
@@ -62,7 +62,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
       )!.precio
 
       if (!currentPrice) {
-        throw new Error("Producto no encontrado")
+        throw new Error('Producto no encontrado')
       }
 
       return currentPrice * current.cantidad + prev
@@ -73,7 +73,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   } catch (error: any) {
     await db.disconnect()
     return res.status(400).json({
-      message: error.message || "Revise logs del server",
+      message: error.message || 'Revise logs del server',
     })
   }
 
@@ -81,7 +81,7 @@ const createOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   const newOrder = new Order({
     ...req.body,
     isPaid: false,
-    currentState: "Ingresado",
+    currentState: 'Ingresado',
     user: userId,
   })
 

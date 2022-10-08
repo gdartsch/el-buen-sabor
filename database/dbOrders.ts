@@ -1,49 +1,46 @@
-import { isValidObjectId } from "mongoose";
-import { IOrder } from "../interfaces";
-import { db } from '.';
-import { Order } from "../models";
+import { isValidObjectId } from 'mongoose'
+import { db } from '.'
+import { IOrder } from '../interfaces'
+import { Order } from '../models'
 
 export const getAllOrders = async (): Promise<IOrder[]> => {
+  await db.connect()
 
-    await db.connect();
-    
-    const orders = await Order.find().lean();
+  const orders = await Order.find().lean()
 
-    await db.disconnect();
+  await db.disconnect()
 
-    return JSON.parse(JSON.stringify(orders));
+  return JSON.parse(JSON.stringify(orders))
 }
 
 export const getOrderById = async (id: string): Promise<IOrder | null> => {
-    
-    if (!isValidObjectId(id)){
-        return null;
-    }
+  if (!isValidObjectId(id)) {
+    return null
+  }
 
-    await db.connect();
-    
-    const order = await Order.findById(id).lean();
+  await db.connect()
 
-    await db.disconnect();
+  const order = await Order.findById(id).lean()
 
-    if (!order) {
-        return null;
-    }
+  await db.disconnect()
 
-    return JSON.parse(JSON.stringify(order));
+  if (!order) {
+    return null
+  }
+
+  return JSON.parse(JSON.stringify(order))
 }
 
 export const getOrdersByUsers = async (userId: string): Promise<IOrder[]> => {
-        
-        if (!isValidObjectId(userId)){
-            return [];
-        }
-    
-        await db.connect();
-        
-        const orders = await Order.find({ user: userId }).lean();
-    
-        await db.disconnect();
-    
-        return JSON.parse(JSON.stringify(orders));
+  if (!isValidObjectId(userId)) {
+    return []
+  }
+
+  await db.connect()
+
+  const orders = await Order.find({ user: userId }).lean()
+
+  await db.disconnect()
+
+  return JSON.parse(JSON.stringify(orders))
 }

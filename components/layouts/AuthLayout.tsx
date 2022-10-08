@@ -1,25 +1,30 @@
-import * as React from 'react';
-import { FC } from 'react';
-import Head from 'next/head';
-import { Box } from '@mui/material';
+import { Box } from '@mui/material'
+import Head from 'next/head'
+import * as React from 'react'
+import { FC } from 'react'
 
 interface Props {
-    title: string;
-    children?: React.ReactNode;
+  title: string
+  children?: React.ReactNode
 }
 
-export const AuthLayout: FC<Props> = ({children, title}) => {
+export const AuthLayout: FC<Props> = ({ children, title }) => {
   return (
     <>
-        <Head>
-            <title>Auth Layout</title>
-        </Head>
+      <Head>
+        <title>Auth Layout</title>
+      </Head>
 
-        <main>
-            <Box display='flex' justifyContent='center' alignItems='center' height="calc(100vh - 200px)">
-                {children}
-            </Box>
-        </main>
+      <main>
+        <Box
+          display='flex'
+          justifyContent='center'
+          alignItems='center'
+          height='calc(100vh - 200px)'
+        >
+          {children}
+        </Box>
+      </main>
     </>
   )
 }

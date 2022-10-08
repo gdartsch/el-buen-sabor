@@ -1,11 +1,6 @@
-import axios from "axios"
-import type { NextApiRequest, NextApiResponse } from "next"
-import { db } from "../../../database"
-import { Order } from "../../../models"
-import mercadoPago from "mercadopago"
-import NextCors from "nextjs-cors"
-import { useReducer } from "react"
-import { useRouter } from "next/router"
+import mercadoPago from 'mercadopago'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import NextCors from 'nextjs-cors'
 
 type Data = {
   message: string
@@ -16,17 +11,17 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   switch (req.method) {
-    case "POST":
+    case 'POST':
       return payOrder(req, res)
     default:
-      return res.status(400).json({ message: "Bad Request" })
+      return res.status(400).json({ message: 'Bad Request' })
   }
 }
 
 const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   await NextCors(req, res, {
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    origin: "*",
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: '*',
     optionsSuccessStatus: 200,
   })
 
@@ -35,7 +30,6 @@ const payOrder = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   mercadoPago.configure({
     access_token: `${process.env.MERCADOPAGO_ACCESS_TOKEN}`,
   })
-  console.log(req.body.thisUrl)
   let preference = {
     back_urls: {
       success: `${process.env.HOST_NAME}/orders/${orderId}?paid=true`,
