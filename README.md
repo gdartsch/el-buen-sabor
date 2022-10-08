@@ -3,7 +3,6 @@
 ## Proyecto final para Universidad Tecnológica Nacional de Mendoza
 ## Integrantes:
 > - Dartsch, Germán
-> - Barroso, Matías
 > - Zabala, Diego
 
 Proyecto de [Next.js](https://nextjs.org/) creado con [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
@@ -27,6 +26,18 @@ yarn dev
 Para llenar la base de datos con la seed de productos y usuarios de prueba, ir al navegador a la dirección: [http://localhost:3000/api/seed](http://localhost:3000/api/seed)
 
 El proyecto corre sobre el puerto [http://localhost:3000](http://localhost:3000)
+
+
+Para construir y correr el proyecto:
+
+```bash
+yarn build
+```
+
+```bash
+yarn start
+```
+
 
 ## Fundamental:
 
